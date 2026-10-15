@@ -30,6 +30,6 @@ jobs:
           gcloud builds submit
           --project=vespra-gateways-prod-01
           --config=deploy/gcp/cloudbuild.yaml
-          --substitutions=_IMAGE_TAG=${GITHUB_SHA}
+          --substitutions=_IMAGE_TAG=${GITHUB_SHA},_GIT_SHA=${GITHUB_SHA}
           --service-account=projects/vespra-gateways-prod-01/serviceAccounts/litellm-builder@vespra-gateways-prod-01.iam.gserviceaccount.com
-          .
+          --no-source
