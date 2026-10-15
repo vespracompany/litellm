@@ -41,6 +41,7 @@ steps:
       - deploy
       - litellm
       - --image=us-central1-docker.pkg.dev/$PROJECT_ID/litellm-custom/litellm:${_IMAGE_TAG}
+      - --update-env-vars=USE_V2_MIGRATION_RESOLVER=false
       - --region=us-central1
       - --platform=managed
       - --quiet
