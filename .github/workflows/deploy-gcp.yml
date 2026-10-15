@@ -1,0 +1,35 @@
+name: Deploy GCP
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-gcp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          workload_identity_provider: projects/200691429235/locations/global/workloadIdentityPools/github/providers/litellm
+          service_account: github-litellm-deployer@vespra-gateways-prod-01.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+        with:
+          project_id: vespra-gateways-prod-01
+      - run: >-
+          gcloud builds submit
+          --project=vespra-gateways-prod-01
+          --config=deploy/gcp/cloudbuild.yaml
+          --substitutions=_IMAGE_TAG=${GITHUB_SHA}
+          --service-account=projects/vespra-gateways-prod-01/serviceAccounts/litellm-builder@vespra-gateways-prod-01.iam.gserviceaccount.com
+          .
